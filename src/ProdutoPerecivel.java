@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class ProdutoPerecivel extends Produto {
@@ -27,5 +28,13 @@ public class ProdutoPerecivel extends Produto {
         } 
         
         return vendaNormal;
+    }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String dados = super.toString();
+        dados += "\nVálido até " + formato.format(dataDeValidade);
+        return dados;
     }
 }
