@@ -59,7 +59,20 @@ public class Comercio {
      */
     static Produto[] lerProdutos(String nomeArquivoDados) {
         Produto[] vetorProdutos;
-        //TO DO
+        Scanner arqDados = null;
+        try {
+            arqDados = new Scanner(new File(nomeArquivoDados), Charset.forName("UTF-8"));
+            quantosProdutos = Integer.parseInt(arqDados.nextLine());
+            vetorProdutos = new Produto[quantosProdutos + MAX_NOVOS_PRODUTOS];
+            for(int i = 0; i < quantosProdutos; i++) {
+                String linha = arqDados.nextLine();
+                vetorProdutos[i] = Produto.criarDoTexto(linha);
+            }
+        } catch (IOException fne) {
+            vetorProdutos = null;
+        } finally {
+            arqDados.close();
+        }
         return vetorProdutos;
     }
 
