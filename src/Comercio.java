@@ -1,3 +1,4 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -58,9 +59,24 @@ public class Comercio {
      * @return Um vetor com os produtos carregados, ou vazio em caso de problemas de leitura.
      */
     static Produto[] lerProdutos(String nomeArquivoDados) {
-        Produto[] vetorProdutos;
-        //TO DO
-        return vetorProdutos;
+
+        try (Scanner arqDados = new Scanner(new File(nomeArquivoDados), Charset.forName("UTF-8"))) {
+
+            quantosProdutos = Integer.parseInt(arqDados.nextLine());
+            Produto[] vetorProdutos = new Produto[quantosProdutos + MAX_NOVOS_PRODUTOS];
+
+            for(int i = 0; i < quantosProdutos; i++) {
+                String linha = arqDados.nextLine();
+                vetorProdutos[i] = Produto.criarDoTexto(linha);
+            }
+
+            return vetorProdutos;
+
+        } catch (IOException e) {
+            System.out.println("Arquivo não encontrado. Criando novo cadastro.");
+            quantosProdutos = 0;
+            return new Produto[MAX_NOVOS_PRODUTOS];
+        }
     }
 
     /** Lista todos os produtos cadastrados, numerados, um por linha */
@@ -76,7 +92,25 @@ public class Comercio {
     /** Localiza um produto no vetor de cadastrados, a partir do nome, e imprime seus dados. 
      *  A busca não é sensível ao caso.  Em caso de não encontrar o produto, imprime mensagem padrão */
     static void localizarProdutos(){
-        //TO DO
+        cabecalho();
+        System.out.print("Digite o nome do produto que deseja buscar: ");
+        String busca = teclado.nextLine().toLowerCase();
+
+        int produtosFiltrados = 0;
+
+        for(int i = 0; i < quantosProdutos; i++){
+        if(produtosCadastrados[i] != null &&
+           produtosCadastrados[i].toString().toLowerCase().contains(busca)) {
+
+            System.out.println(String.format("%02d - %s", 
+                    (i+1), produtosCadastrados[i].toString()));
+            produtosFiltrados++;
+        }
+        }
+
+        if(produtosFiltrados == 0){
+            System.out.println("Este produto não esta cadastrado em nosso sistema.");
+        }
     }
 
     /**
@@ -86,15 +120,76 @@ public class Comercio {
      * Uma sugestão de melhoria mais significativa poderia ser o uso de padrão Factory Method para criação dos objetos.
      */
     static void cadastrarProduto(){
-        //TO DO
-    }
+        cabecalho();
 
+        if(quantosProdutos >= produtosCadastrados.length){
+            System.out.println("O limite de prdotuos cadastrados foi atingido.");
+            return;
+        }
+
+        System.out.println("Tipo do produto:");
+        System.out.println("1 - Produto não perecível");
+        System.out.println("2 - Produto perecível");
+        System.out.print("Digite qual tipo de produto você deseja cadastrar: ");
+        int tipo = Integer.parseInt(teclado.nextLine());
+
+        System.out.print("Descrição: ");
+        String descricao = teclado.nextLine();
+
+        System.out.print("Preço de custo: ");
+        double preco = Double.parseDouble(teclado.nextLine());
+
+        System.out.print("Margem de lucro: ");
+        double margem = Double.parseDouble(teclado.nextLine());
+
+        Produto novoProduto;
+
+        switch(tipo){
+            case 1:
+                novoProduto = new ProdutoNaoPerecivel(descricao, preco, margem);
+                break;
+
+            case 2:
+                System.out.print("Data de validade (dd/MM/yyyy): ");
+                String dataStr = teclado.nextLine();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate validade = LocalDate.parse(dataStr, formatter);
+
+                novoProduto = new ProdutoPerecivel(descricao, preco, margem, validade);
+                break;
+
+            default:
+                System.out.println("Tipo inválido de produto inválido. Por favor, digite 1 ou 2");
+                return; 
+        }
+
+        produtosCadastrados[quantosProdutos] = novoProduto;
+        quantosProdutos++;
+
+        System.out.println("O produto cadastrado com sucesso!");
+    }
     /**
      * Salva os dados dos produtos cadastrados no arquivo csv informado. Sobrescreve todo o conteúdo do arquivo.
      * @param nomeArquivo Nome do arquivo a ser gravado.
      */
     public static void salvarProdutos(String nomeArquivo){
-        //TO DO  
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
+
+            writer.write(String.valueOf(quantosProdutos));
+            writer.newLine();
+            
+            for(int i = 0; i < quantosProdutos; i++){
+                if(produtosCadastrados[i] != null){
+                    writer.write(produtosCadastrados[i].gerarDadosTexto());
+                    writer.newLine();
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar produtos");
+        }
     }
 
     public static void main(String[] args) throws Exception {
