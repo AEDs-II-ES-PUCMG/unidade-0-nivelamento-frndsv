@@ -177,9 +177,12 @@ public class Comercio {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
 
+            writer.write(String.valueOf(quantosProdutos));
+            writer.newLine();
+            
             for(int i = 0; i < quantosProdutos; i++){
                 if(produtosCadastrados[i] != null){
-                    writer.write(produtosCadastrados[i].toString());
+                    writer.write(produtosCadastrados[i].gerarDadosTexto());
                     writer.newLine();
                 }
             }
