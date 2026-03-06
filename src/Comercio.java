@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+/**teste */
+
 public class Comercio {
     /** Para inclusão de novos produtos no vetor */
     static final int MAX_NOVOS_PRODUTOS = 10;
