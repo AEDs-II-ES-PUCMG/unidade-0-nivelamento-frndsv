@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-/**teste */
+/** teste */
 
 public class Comercio {
     /** Para inclusão de novos produtos no vetor */
