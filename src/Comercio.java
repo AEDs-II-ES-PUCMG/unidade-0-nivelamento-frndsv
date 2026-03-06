@@ -80,7 +80,8 @@ public class Comercio {
     }
 
     /** Lista todos os produtos cadastrados, numerados, um por linha */
-    static void listarTodosOsProdutos(){
+    static void 
+    listarTodosOsProdutos(){
         cabecalho();
         System.out.println("\nPRODUTOS CADASTRADOS:");
         for (int i = 0; i < produtosCadastrados.length; i++) {

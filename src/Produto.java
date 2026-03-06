@@ -67,7 +67,7 @@ public abstract class Produto {
             novoProduto = new ProdutoNaoPerecivel(descricao, precoDeCusto, margemDeLucro);
         } else if(tipoProduto == 2) {
             LocalDate dataValidade = LocalDate.parse(atributos[4], formato);
-            novoProduto = new ProdutoPerecivel(descricao, tipoProduto, tipoProduto, dataValidade);
+            novoProduto = new ProdutoPerecivel(descricao, precoDeCusto, margemDeLucro, dataValidade);
 
         }
         
