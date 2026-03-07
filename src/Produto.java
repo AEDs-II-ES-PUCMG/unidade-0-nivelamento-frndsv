@@ -8,6 +8,7 @@ public abstract class Produto {
     protected String descricao;
     protected double precoCusto;
     protected double margemLucro;
+    protected int quantidadeEmEstoque;
     // Teste 
     // Construtor com margem de lucro informada
     public Produto(String desc, double precoCusto, double margemLucro) {
@@ -55,25 +56,34 @@ public abstract class Produto {
     */
     static Produto criarDoTexto(String linha){
         Produto novoProduto = null;
+        int quantidadeEstoque = 0;
         String[] atributos = linha.split(";");
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        // "1; descrição;preçoDeCusto;margemDeLucro"
-        // "2; descrição;preçoDeCusto;margemDeLucro;dataDeValidade"
+        // "1; descrição;preçoDeCusto;margemDeLucro;quantidadeEmEstoque"
+        // "2; descrição;preçoDeCusto;margemDeLucro;dataDeValidade;quantidadeEmEstoque"
         int tipoProduto = Integer.parseInt(atributos[0]);
         String descricao = atributos[1];
         Double precoDeCusto = Double.parseDouble(atributos[2]);
         Double margemDeLucro  = Double.parseDouble(atributos[3]);
         if(tipoProduto == 1) {
-            novoProduto = new ProdutoNaoPerecivel(descricao, precoDeCusto, margemDeLucro);
+            quantidadeEstoque = Integer.parseInt(atributos[4]);
+            novoProduto = new ProdutoNaoPerecivel(descricao, precoDeCusto, margemDeLucro, quantidadeEstoque);
         } else if(tipoProduto == 2) {
             LocalDate dataValidade = LocalDate.parse(atributos[4], formato);
-            novoProduto = new ProdutoPerecivel(descricao, precoDeCusto, margemDeLucro, dataValidade);
+            quantidadeEstoque = Integer.parseInt(atributos[5]);
+            novoProduto = new ProdutoPerecivel(descricao, precoDeCusto, margemDeLucro, dataValidade, quantidadeEstoque);
 
         }
+
         
         return novoProduto;
     }
 
+
+    static int reduzirEstoque(int quantidade) {
+        this.quantidadeEmEstoque -= quantidade;
+        return quantidade;
+    }
     /**
     * Igualdade de produtos: caso possuam o mesmo nome/descrição.
     * @param obj Outro produto a ser comparado
@@ -83,6 +93,14 @@ public abstract class Produto {
     public boolean equals(Object obj){
     Produto outro = (Produto)obj;
     return this.descricao.toLowerCase().equals(outro.descricao.toLowerCase());
+    }
+
+    public void setQuantidadeEstoque(int quantidade) {
+        this.quantidadeEmEstoque = quantidade;  
+    }
+
+    public int getQuantidadeEstoque() {
+        return quantidadeEmEstoque;
     }
 
     @Override
